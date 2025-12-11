@@ -41,7 +41,24 @@ deep-learning-iim/
 ├── styles.css # Styles CSS
 └── README.md # Description du projet
 
+
+
 ---
+
+## Tensorboard
+
+
+
+<img width="1850" height="908" alt="Capture d&#39;écran 2025-12-11 155023" src="https://github.com/user-attachments/assets/64e0e50d-4bef-4a7d-8f46-d97b589aa0ff" />
+
+
+
+
+
+
+
+
+
 
 ## 🖥️ Technologies
 
