@@ -1,8 +1,5 @@
 # ✨ Reconnaissance de chiffres manuscrits (Deep Learning)  
 
-[![Licence](https://img.shields.io/badge/license-MIT-blue)](LICENSE)  
-[![MNIST](https://img.shields.io/badge/Dataset-MNIST-orange)](http://yann.lecun.com/exdb/mnist/)  
-
 **Nom :** Diangou Camara  
 **Projet :** Deep Learning — IIM Digital School  
 **Démo en ligne :** [https://diangou.github.io/deep-learning-iim/](https://diangou.github.io/deep-learning-iim/)
