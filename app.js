@@ -1,4 +1,6 @@
 let session;
+let correctCount = 0;
+
 
 async function loadModel() {
   session = await ort.InferenceSession.create("model.onnx");
@@ -11,17 +13,33 @@ loadModel();
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 let drawing = false;
+let lastX = 0;
+let lastY = 0;
 
-canvas.addEventListener("mousedown", () => (drawing = true));
+canvas.addEventListener("mousedown", (e) => {
+  drawing = true;
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+});
+
 canvas.addEventListener("mouseup", () => (drawing = false));
+canvas.addEventListener("mouseout", () => (drawing = false));
 canvas.addEventListener("mousemove", draw);
 
 function draw(e) {
   if (!drawing) return;
-  ctx.fillStyle = "white";
+
+  ctx.strokeStyle = "white"; // couleur du trait
+  ctx.lineWidth = 24;        // taille du pinceau
+  ctx.lineCap = "round";     // bords arrondis
+
   ctx.beginPath();
-  ctx.arc(e.offsetX, e.offsetY, 12, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+
+  lastX = e.offsetX;
+  lastY = e.offsetY;
 }
 
 document.getElementById("clear").onclick = () => {
@@ -29,9 +47,13 @@ document.getElementById("clear").onclick = () => {
   document.getElementById("result").innerText = "---";
 };
 
-// 🔗 Bouton prédire
 document.getElementById("predictBtn").onclick = () => {
   predict();
+};
+
+document.getElementById("correctBtn").onclick = () => {
+  correctCount++;
+  document.getElementById("correctCount").innerText = correctCount;
 };
 
 async function predict() {
@@ -46,9 +68,13 @@ async function predict() {
   const imageData = smallCtx.getImageData(0, 0, 28, 28).data;
   const input = new Float32Array(28 * 28);
 
+  const mean = 0.1307;
+  const std = 0.3081;
+
   for (let i = 0; i < 28 * 28; i++) {
-    const r = imageData[i * 4];
-    input[i] = r / 255; // ⚠️ plus d’inversion
+    const r = imageData[i * 4]; 
+    const pixel = r / 255; 
+    input[i] = (pixel - mean) / std; 
   }
 
   const tensor = new ort.Tensor("float32", input, [1, 1, 28, 28]);
@@ -57,7 +83,6 @@ async function predict() {
   const results = await session.run(feeds);
   const output = results[session.outputNames[0]].data;
 
-  // Softmax pour voir les probabilités
   const probs = softmax(Array.from(output));
   console.log("Probabilités:", probs);
 
